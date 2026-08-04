@@ -214,7 +214,7 @@ namespace PixelPC.Controllers
             }
             _dbContext.ProductVariants.Remove(variant);
             await _dbContext.SaveChangesAsync();
-            return Ok(variant);
+            return Ok(variant); //
         }
     }
 }
