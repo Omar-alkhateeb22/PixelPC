@@ -207,6 +207,9 @@ namespace PixelPC.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteVariant(long id)
         {
+            var UserIdString = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var UserId = int.Parse(UserIdString);
+
             var variant = await _dbContext.ProductVariants.FirstOrDefaultAsync(v => v.Id == id);
             if (variant == null)
             {
