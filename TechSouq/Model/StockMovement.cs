@@ -6,16 +6,19 @@ namespace PixelPC.Models
     {
         public long Id { get; set; }
 
+
         [ForeignKey("ProductVariant")]
         public long ProductVariantId { get; set; }
         public ProductVariant? ProductVariant { get; set; }
 
-        public long? OrderId { get; set; }        // nullable -> null for manual/admin adjustments
+
+        [ForeignKey("Order")]
+        public long? OrderId { get; set; }       
         public Order? Order { get; set; }
 
-        public string MovementType { get; set; } // In / Out
+        public string MovementType { get; set; } 
         public int Quantity { get; set; }
-        public string Reason { get; set; } = string.Empty;
+        public string Reason { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
