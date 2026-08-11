@@ -1,0 +1,29 @@
+<input
+  type="text"
+  class="form-control"
+  autocomplete="off"
+  [disabled]="disabled() || loading()"
+  [placeholder]="loading() ? 'جاري تحميل المتغيرات...' : placeholder()"
+  [value]="searchText()"
+  (input)="onInput($event)"
+  (focus)="onFocus($event)"
+  (keydown)="onKeydown($event)"
+  (blur)="onBlur()"
+/>
+
+@if (isOpen() && !loading()) {
+  <ul class="variant-select-menu list-group">
+    @for (item of navItems(); track item.id ?? 'clear'; let i = $index) {
+      <li
+        class="list-group-item list-group-item-action"
+        [class.active]="i === highlightedIndex()"
+        (mousedown)="selectItem(item)"
+      >
+        {{ item.label }}
+      </li>
+    }
+    @if (navItems().length === 0) {
+      <li class="list-group-item text-muted">لا توجد نتائج</li>
+    }
+  </ul>
+}

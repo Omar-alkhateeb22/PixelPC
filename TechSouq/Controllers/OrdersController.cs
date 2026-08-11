@@ -242,5 +242,23 @@ namespace PixelPC.Controllers
 
             return Ok("Order status updated:" + order.Status);
         }
+        [HttpGet("GetAllOrders")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var orders = await (from o in _dbContext.Orders
+                                orderby o.OrderDate descending
+                                select new
+                                {
+                                    o.Id,
+                                    o.UserId,
+                                    o.OrderDate,
+                                    o.Status,
+                                    o.TotalAmount,
+                                    o.ShippingAddress
+                                }).ToListAsync();
+
+            return Ok(orders);
+        }
     }
 }

@@ -1,0 +1,31 @@
+.product-detail-image {
+  height: 320px;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.product-detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-detail-image .img-placeholder i {
+  font-size: 3rem;
+}
+
+.variant-option {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  cursor: pointer;
+}
+
+.variant-option.selected {
+  border-color: var(--pixelpc-accent);
+  background-color: rgba(250, 204, 21, 0.1);
+}
+
+.variant-option.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

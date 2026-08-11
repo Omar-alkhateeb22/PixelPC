@@ -1,0 +1,98 @@
+<section class="container py-5">
+  @if (loading()) {
+    <p class="text-muted">جاري التحميل...</p>
+  } @else if (errorMessage()) {
+    <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
+  } @else if (product(); as product) {
+    <div class="row g-4">
+      <div class="col-md-7">
+        <div class="product-detail-image">
+          @if (product.imageUrl && !imageLoadError()) {
+            <img [src]="product.imageUrl" [alt]="product.name" (error)="imageLoadError.set(true)" />
+          } @else {
+            <div class="img-placeholder"><i class="bi bi-image"></i></div>
+          }
+        </div>
+
+        <h1 class="h3 mb-1">{{ product.name }}</h1>
+        <p class="text-muted mb-1">{{ product.brand }}</p>
+        <p class="text-muted small mb-3">{{ product.categoryName }}</p>
+        <p class="mb-4">{{ product.description }}</p>
+      </div>
+
+      <div class="col-md-5">
+        <div class="card">
+          <div class="card-body">
+            @if (product.variants.length === 0) {
+              <p class="text-muted mb-0">لا تتوفر نسخ من هذا المنتج حاليًا.</p>
+            } @else {
+              <h2 class="h6 mb-3">اختر النسخة</h2>
+
+              <div class="d-flex flex-column gap-2 mb-4">
+                @for (variant of product.variants; track variant.id) {
+                  <label
+                    class="variant-option d-flex align-items-center justify-content-between gap-3 p-2 rounded"
+                    [class.selected]="selectedVariantId() === variant.id"
+                    [class.disabled]="variant.stockQuantity === 0"
+                  >
+                    <span class="d-flex align-items-center gap-2">
+                      <input
+                        type="radio"
+                        name="variant"
+                        class="form-check-input mt-0"
+                        [checked]="selectedVariantId() === variant.id"
+                        [disabled]="variant.stockQuantity === 0"
+                        (change)="selectVariant(variant.id)"
+                      />
+                      <span>
+                        <span class="d-block">{{ variant.stockKeepingUnit }}</span>
+                        @if (variantAttributesLabel(variant); as attrs) {
+                          <span class="text-muted small d-block">{{ attrs }}</span>
+                        }
+                        @if (variant.stockQuantity === 0) {
+                          <span class="text-danger small d-block">غير متوفر</span>
+                        }
+                      </span>
+                    </span>
+                    <span class="text-price text-nowrap">{{ variant.price }}</span>
+                  </label>
+                }
+              </div>
+
+              @if (selectedVariant(); as variant) {
+                <div class="mb-3">
+                  <label class="form-label">الكمية</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    min="1"
+                    [max]="variant.stockQuantity"
+                    [value]="quantity()"
+                    (input)="onQuantityInput($event)"
+                  />
+                  <div class="form-text">الكمية المتوفرة: {{ variant.stockQuantity }}</div>
+                </div>
+              }
+
+              @if (addToCartError()) {
+                <div class="alert alert-danger py-2" role="alert">{{ addToCartError() }}</div>
+              }
+              @if (addToCartSuccess()) {
+                <div class="alert alert-success py-2" role="alert">تمت إضافة المنتج إلى السلة.</div>
+              }
+
+              <button
+                type="button"
+                class="btn btn-primary w-100"
+                [disabled]="!canAddToCart()"
+                (click)="addToCart()"
+              >
+                {{ addingToCart() ? 'جارٍ الإضافة...' : 'أضف للسلة' }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</section>

@@ -1,0 +1,94 @@
+<section class="container py-5">
+  <h2 class="mb-4">إدارة التصنيفات</h2>
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger" role="alert">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title mb-3">
+        {{ editingId() ? 'تعديل التصنيف' : 'إضافة تصنيف جديد' }}
+      </h5>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="d-flex gap-2 align-items-start flex-wrap">
+        <div class="flex-grow-1" style="min-width: 220px;">
+          <select
+            class="form-select"
+            formControlName="categoryOption"
+            (change)="onCategoryOptionChange()"
+            [class.is-invalid]="form.controls.categoryOption.invalid && form.controls.categoryOption.touched"
+          >
+            <option value="" disabled>اختر تصنيفًا</option>
+            @for (name of availableCategoryNames(); track name) {
+              <option [ngValue]="name">{{ name }}</option>
+            }
+            <option [ngValue]="otherOptionValue">أخرى</option>
+          </select>
+          @if (form.controls.categoryOption.invalid && form.controls.categoryOption.touched) {
+            <div class="invalid-feedback">يجب اختيار تصنيف.</div>
+          }
+
+          @if (isOtherSelected()) {
+            <input
+              type="text"
+              class="form-control mt-2"
+              placeholder="اكتب اسم التصنيف"
+              formControlName="customName"
+              [class.is-invalid]="form.controls.customName.invalid && form.controls.customName.touched"
+            />
+            @if (form.controls.customName.invalid && form.controls.customName.touched) {
+              <div class="invalid-feedback">يجب كتابة اسم التصنيف.</div>
+            }
+          }
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting()">
+          {{ editingId() ? 'حفظ التعديلات' : 'إضافة' }}
+        </button>
+
+        @if (editingId()) {
+          <button type="button" class="btn btn-outline-secondary" (click)="cancelEdit()">
+            إلغاء
+          </button>
+        }
+      </form>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="text-muted">جاري التحميل...</p>
+  } @else if (categories().length === 0) {
+    <p class="text-muted">لا توجد بيانات بعد.</p>
+  } @else {
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle bg-white">
+        <thead>
+          <tr>
+            <th>المعرف</th>
+            <th>الاسم</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (category of categories(); track category.id) {
+            <tr>
+              <td>{{ category.id }}</td>
+              <td>{{ category.name }}</td>
+              <td class="d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="startEdit(category)">
+                  تعديل
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteCategory(category)">
+                  حذف
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

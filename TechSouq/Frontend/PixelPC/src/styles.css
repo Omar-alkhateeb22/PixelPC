@@ -1,0 +1,87 @@
+/* ==========================================================================
+   PixelPC theme — centralized design tokens.
+   Do not hardcode these hex values in component styles; reference the
+   custom properties below (or the Bootstrap variables they feed) instead.
+   ========================================================================== */
+:root {
+  --pixelpc-primary: #161b22; /* headers, nav bars */
+  --pixelpc-secondary-dark: #0d1117; /* category strip under header */
+  --pixelpc-accent: #facc15; /* gold/yellow — icons, active states */
+  --pixelpc-price: #ca8a04; /* darker gold — prices/buttons on white */
+  --pixelpc-bg: #f8f9fa; /* page background */
+  --pixelpc-text: #161b22; /* body text */
+  --pixelpc-text-muted: #212529; /* secondary body text */
+
+  /* Feed the theme into Bootstrap's own CSS variables so components
+     (buttons, links, navbars, etc.) pick it up automatically. */
+  --bs-body-bg: var(--pixelpc-bg);
+  --bs-body-color: var(--pixelpc-text);
+  --bs-primary: var(--pixelpc-accent);
+  --bs-primary-rgb: 250, 204, 21;
+  --bs-link-color: var(--pixelpc-price);
+  --bs-link-color-rgb: 202, 138, 4;
+  --bs-link-hover-color: var(--pixelpc-primary);
+}
+
+body {
+  background-color: var(--pixelpc-bg);
+  color: var(--pixelpc-text);
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--pixelpc-price);
+  --bs-btn-border-color: var(--pixelpc-price);
+  --bs-btn-hover-bg: #a86f05;
+  --bs-btn-hover-border-color: #a86f05;
+  --bs-btn-active-bg: #a86f05;
+  --bs-btn-active-border-color: #a86f05;
+  --bs-btn-color: #161b22;
+  --bs-btn-hover-color: #161b22;
+  --bs-btn-active-color: #161b22;
+}
+
+.text-price {
+  color: var(--pixelpc-price);
+  font-weight: 600;
+}
+
+.text-accent {
+  color: var(--pixelpc-accent);
+}
+
+.bg-pixelpc-primary {
+  background-color: var(--pixelpc-primary);
+}
+
+.bg-pixelpc-secondary-dark {
+  background-color: var(--pixelpc-secondary-dark);
+}
+
+.img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: #e9ecef;
+  color: #adb5bd;
+}
+
+/* Shared centered auth-card layout (login, register). */
+.auth-page {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+}

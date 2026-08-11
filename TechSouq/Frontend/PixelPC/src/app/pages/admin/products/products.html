@@ -1,0 +1,310 @@
+<section class="container py-5">
+  <h2 class="mb-4">إدارة المنتجات</h2>
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger" role="alert">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title mb-3">
+        {{ editingId() ? 'تعديل المنتج' : 'إضافة منتج جديد' }}
+      </h5>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">اسم المنتج</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="name"
+            [class.is-invalid]="form.controls.name.invalid && form.controls.name.touched"
+          />
+          @if (form.controls.name.invalid && form.controls.name.touched) {
+            <div class="invalid-feedback">اسم المنتج مطلوب.</div>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">العلامة التجارية</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="brand"
+            [class.is-invalid]="form.controls.brand.invalid && form.controls.brand.touched"
+          />
+          @if (form.controls.brand.invalid && form.controls.brand.touched) {
+            <div class="invalid-feedback">العلامة التجارية مطلوبة.</div>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">التصنيف</label>
+          <select
+            class="form-select"
+            formControlName="categoryId"
+            [class.is-invalid]="form.controls.categoryId.invalid && form.controls.categoryId.touched"
+          >
+            @if (categoriesLoading()) {
+              <option [ngValue]="null">جاري التحميل...</option>
+            } @else if (categories().length === 0) {
+              <option [ngValue]="null">أضف تصنيفاً أولاً من صفحة التصنيفات</option>
+            } @else {
+              <option [ngValue]="null" disabled>اختر تصنيفًا</option>
+              @for (category of categories(); track category.id) {
+                <option [ngValue]="category.id">{{ category.name }}</option>
+              }
+            }
+          </select>
+          @if (form.controls.categoryId.invalid && form.controls.categoryId.touched) {
+            <div class="invalid-feedback">يجب اختيار تصنيف.</div>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">الوصف</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="description"
+            [class.is-invalid]="form.controls.description.invalid && form.controls.description.touched"
+          />
+          @if (form.controls.description.invalid && form.controls.description.touched) {
+            <div class="invalid-feedback">الوصف مطلوب.</div>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">رابط الصورة (URL)</label>
+          <input type="text" class="form-control" formControlName="imageUrl" />
+        </div>
+
+        <div class="col-12 d-flex align-items-center gap-2">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="isSubmitting() || categoriesLoading() || categories().length === 0"
+          >
+            {{ editingId() ? 'حفظ التعديلات' : 'إضافة' }}
+          </button>
+
+          @if (editingId()) {
+            <button type="button" class="btn btn-outline-secondary" (click)="cancelEdit()">
+              إلغاء
+            </button>
+          }
+
+          @if (!categoriesLoading() && categories().length === 0) {
+            <span class="text-muted small">لا يمكن إضافة منتج قبل إضافة تصنيف واحد على الأقل.</span>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="text-muted">جاري التحميل...</p>
+  } @else if (products().length === 0) {
+    <p class="text-muted">لا توجد بيانات بعد.</p>
+  } @else {
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle bg-white">
+        <thead>
+          <tr>
+            <th>الصورة</th>
+            <th>المعرف</th>
+            <th>الاسم</th>
+            <th>العلامة التجارية</th>
+            <th>التصنيف</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of products(); track product.id) {
+            <tr>
+              <td>
+                <div class="product-thumb">
+                  @if (product.imageUrl && !brokenImageIds().has(product.id)) {
+                    <img [src]="product.imageUrl" [alt]="product.name" (error)="onImageError(product.id)" />
+                  } @else {
+                    <div class="img-placeholder"><i class="bi bi-image"></i></div>
+                  }
+                </div>
+              </td>
+              <td>{{ product.id }}</td>
+              <td>{{ product.name }}</td>
+              <td>{{ product.brand }}</td>
+              <td>{{ product.categoryName }}</td>
+              <td class="d-flex gap-2 flex-wrap">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  [disabled]="categoriesLoading()"
+                  (click)="startEdit(product)"
+                >
+                  تعديل
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteProduct(product)">
+                  حذف
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-dark" (click)="selectProductForVariants(product)">
+                  {{ selectedProductId() === product.id ? 'إخفاء النسخ' : 'إدارة النسخ' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (selectedProduct(); as product) {
+    <section class="card mb-4">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="card-title mb-0">نسخ المنتج: {{ product.name }}</h5>
+          <button type="button" class="btn-close" aria-label="إغلاق" (click)="closeVariantsSection()"></button>
+        </div>
+
+        @if (variantsLoading()) {
+          <p class="text-muted">جاري التحميل...</p>
+        } @else {
+          <button type="button" class="btn btn-primary mb-3" (click)="openAddVariantModal()">
+            + إضافة نسخة جديدة
+          </button>
+
+          @if (!productDetail()?.variants?.length) {
+            <p class="text-muted">لا توجد نسخ بعد.</p>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered bg-white">
+                <thead>
+                  <tr>
+                    <th>SKU</th>
+                    <th>السعر</th>
+                    <th>الكمية</th>
+                    <th>حد إعادة الطلب</th>
+                    <th>إجراءات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (variant of productDetail()!.variants; track variant.id) {
+                    <tr>
+                      <td>{{ variant.stockKeepingUnit }}</td>
+                      <td class="text-price">{{ variant.price }}</td>
+                      <td>{{ variant.stockQuantity }}</td>
+                      <td>{{ variant.reorderLevel }}</td>
+                      <td>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-primary"
+                          (click)="openEditVariantModal(variant)"
+                        >
+                          تعديل
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-danger ms-2"
+                          (click)="deleteVariant(variant)"
+                        >
+                          حذف
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        }
+      </div>
+    </section>
+  }
+</section>
+
+@if (showVariantModal() && variantForm(); as form) {
+  <div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form [formGroup]="form" (ngSubmit)="submitVariantModal()" novalidate>
+          <div class="modal-header">
+            <h5 class="modal-title">
+              {{ editingVariantId() ? 'تعديل النسخة' : 'إضافة نسخة جديدة' }}
+            </h5>
+            <button type="button" class="btn-close" aria-label="إغلاق" (click)="closeVariantModal()"></button>
+          </div>
+
+          <div class="modal-body row g-3">
+            <div class="col-md-6">
+              <label class="form-label">رمز المنتج (SKU)</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="stockKeepingUnit"
+                [class.is-invalid]="
+                  form.controls.stockKeepingUnit.invalid && form.controls.stockKeepingUnit.touched
+                "
+              />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">السعر</label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="price"
+                [class.is-invalid]="form.controls.price.invalid && form.controls.price.touched"
+              />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">الكمية في المخزون</label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="stockQuantity"
+                [class.is-invalid]="form.controls.stockQuantity.invalid && form.controls.stockQuantity.touched"
+              />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">حد إعادة الطلب</label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="reorderLevel"
+                [class.is-invalid]="form.controls.reorderLevel.invalid && form.controls.reorderLevel.touched"
+              />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">الرام (RAM)</label>
+              <input type="text" class="form-control" formControlName="ram" />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">التخزين (Storage)</label>
+              <input type="text" class="form-control" formControlName="storage" />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">اللون (Color)</label>
+              <input type="text" class="form-control" formControlName="color" />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" [disabled]="isSavingVariant()">
+              {{ editingVariantId() ? 'حفظ التعديلات' : 'إضافة' }}
+            </button>
+            <button type="button" class="btn btn-outline-secondary" (click)="closeVariantModal()">
+              إلغاء
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}

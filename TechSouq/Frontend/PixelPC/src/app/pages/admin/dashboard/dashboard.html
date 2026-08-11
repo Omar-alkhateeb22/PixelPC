@@ -1,0 +1,45 @@
+<section class="container py-5">
+  <h2 class="mb-4">لوحة التحكم</h2>
+
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    <div class="col">
+      <a routerLink="/admin/categories" class="card h-100 text-decoration-none text-reset">
+        <div class="card-body text-center">
+          <i class="bi bi-tags text-accent" style="font-size: 2rem;"></i>
+          <h5 class="card-title mt-3 mb-1">التصنيفات</h5>
+          <p class="text-price fs-4 mb-0">{{ categoryCount() ?? '—' }}</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col">
+      <a routerLink="/admin/products" class="card h-100 text-decoration-none text-reset">
+        <div class="card-body text-center">
+          <i class="bi bi-box-seam text-accent" style="font-size: 2rem;"></i>
+          <h5 class="card-title mt-3 mb-1">المنتجات</h5>
+          <p class="text-price fs-4 mb-0">{{ productCount() ?? '—' }}</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col">
+      <a routerLink="/admin/stock-movements" class="card h-100 text-decoration-none text-reset">
+        <div class="card-body text-center">
+          <i class="bi bi-arrow-left-right text-accent" style="font-size: 2rem;"></i>
+          <h5 class="card-title mt-3 mb-1">حركات المخزون</h5>
+          <p class="text-price fs-4 mb-0">{{ movementCount() ?? '—' }}</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col">
+      <a routerLink="/admin/orders" class="card h-100 text-decoration-none text-reset">
+        <div class="card-body text-center">
+          <i class="bi bi-receipt text-accent" style="font-size: 2rem;"></i>
+          <h5 class="card-title mt-3 mb-1">الطلبات</h5>
+          <p class="text-price fs-4 mb-0">{{ orderCount() ?? '—' }}</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>

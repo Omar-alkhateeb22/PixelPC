@@ -1,0 +1,41 @@
+<header class="bg-pixelpc-primary py-3">
+  <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <a routerLink="/" class="navbar-brand text-accent fw-bold fs-4 text-decoration-none" dir="ltr">
+      PixelPC
+    </a>
+
+    <nav class="d-flex align-items-center gap-4">
+      @if (!isLoggedIn()) {
+        <a routerLink="/login" class="text-white text-decoration-none">
+          تسجيل الدخول
+        </a>
+        <a routerLink="/register" class="btn btn-primary btn-sm">
+          إنشاء حساب
+        </a>
+      } @else if (isAdmin()) {
+        <a routerLink="/admin" class="text-white text-decoration-none d-flex align-items-center gap-1">
+          <i class="bi bi-speedometer2 text-accent fs-5"></i>
+          لوحة التحكم
+        </a>
+        <button type="button" class="btn btn-primary btn-sm" (click)="logout()">
+          تسجيل الخروج
+        </button>
+      } @else {
+        <a routerLink="/products" class="text-white text-decoration-none">
+          المنتجات
+        </a>
+        <a routerLink="/cart" class="text-white text-decoration-none d-flex align-items-center gap-1">
+          <i class="bi bi-cart3 text-accent fs-5"></i>
+          السلة
+        </a>
+        <a routerLink="/orders" class="text-white text-decoration-none d-flex align-items-center gap-1">
+          <i class="bi bi-person-circle text-accent fs-5"></i>
+          طلباتي
+        </a>
+        <button type="button" class="btn btn-primary btn-sm" (click)="logout()">
+          تسجيل الخروج
+        </button>
+      }
+    </nav>
+  </div>
+</header>

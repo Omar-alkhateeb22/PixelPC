@@ -1,0 +1,21 @@
+<nav class="admin-nav bg-pixelpc-secondary-dark">
+  <div class="container d-flex flex-wrap gap-1 py-2">
+    <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="admin-nav-link">
+      لوحة التحكم
+    </a>
+    <a routerLink="/admin/categories" routerLinkActive="active" class="admin-nav-link">
+      التصنيفات
+    </a>
+    <a routerLink="/admin/products" routerLinkActive="active" class="admin-nav-link">
+      المنتجات
+    </a>
+    <a routerLink="/admin/stock-movements" routerLinkActive="active" class="admin-nav-link">
+      حركات المخزون
+    </a>
+    <a routerLink="/admin/orders" routerLinkActive="active" class="admin-nav-link">
+      الطلبات
+    </a>
+  </div>
+</nav>
+
+<router-outlet />

@@ -1,0 +1,24 @@
+:host {
+  position: relative;
+  display: block;
+}
+
+:host(.ng-invalid.ng-touched) input {
+  border-color: #dc3545;
+}
+
+.variant-select-menu {
+  position: absolute;
+  z-index: 1050;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 2px;
+  max-height: 240px;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.variant-select-menu .list-group-item {
+  cursor: pointer;
+}

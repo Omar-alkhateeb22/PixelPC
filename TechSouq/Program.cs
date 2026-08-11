@@ -5,16 +5,19 @@ using PixelPC;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
-
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<PixelPCDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PixelPCDbContext")));
 
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+        policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod());
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -44,6 +47,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();   // ⬅️ ضيف هذا السطر
+app.UseCors("AllowAngular");   // ⬅️ بعد HttpsRedirection، قبل Authentication
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

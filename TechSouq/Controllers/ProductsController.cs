@@ -36,8 +36,10 @@ namespace PixelPC.Controllers
                            product.Name,
                            product.Brand,
                            product.Description,
+                           product.ImageUrl,   // ⬅️ ضيف هذا
                            CategoryId = product.CategoryId,
                            CategoryName = category.Name
+
                        };
 
             var result = await data.ToListAsync();
@@ -62,6 +64,7 @@ namespace PixelPC.Controllers
                                      p.Name,
                                      p.Brand,
                                      p.Description,
+                                     p.ImageUrl,   // ⬅️ ضيف هذا
                                      CategoryId = p.CategoryId,
                                      CategoryName = c.Name
                                  }).FirstOrDefaultAsync();
@@ -74,6 +77,7 @@ namespace PixelPC.Controllers
                                       v.StockKeepingUnit,
                                       v.Price,
                                       v.StockQuantity,
+                                      v.ReorderLevel,  
                                       v.AttributesJson
                                   }).ToListAsync();
             var query = new
@@ -82,6 +86,7 @@ namespace PixelPC.Controllers
                 product.Name,
                 product.Brand,
                 product.Description,
+                product.ImageUrl,
                 product.CategoryId,
                 product.CategoryName,
                 Variants = variants
@@ -101,7 +106,9 @@ namespace PixelPC.Controllers
                 Name = dto.Name,
                 Brand = dto.Brand,
                 Description = dto.Description,
-                CategoryId = dto.CategoryId
+                CategoryId = dto.CategoryId,
+                    ImageUrl = dto.ImageUrl   // ⬅️ ضيف هذا
+
             };
 
             _dbContext.Products.Add(product);
@@ -124,6 +131,7 @@ namespace PixelPC.Controllers
             product.Brand = dto.Brand;
             product.Description = dto.Description;
             product.CategoryId = dto.CategoryId;
+            product.ImageUrl = dto.ImageUrl;   
 
             await _dbContext.SaveChangesAsync();
             return Ok(product);
@@ -218,6 +226,51 @@ namespace PixelPC.Controllers
             _dbContext.ProductVariants.Remove(variant);
             await _dbContext.SaveChangesAsync();
             return Ok(variant); //
+        }
+        [HttpPost("UploadImage")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UploadProductImage(long id, IFormFile file)
+        {
+            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+            if (product == null)
+            {
+                return NotFound("Product not found");
+            }
+
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded");
+            }
+
+            // تحقق بسيط من نوع الملف
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+            var extension = Path.GetExtension(file.FileName).ToLower();
+            if (!allowedExtensions.Contains(extension))
+            {
+                return BadRequest("Only image files are allowed (jpg, jpeg, png, webp)");
+            }
+
+            // اسم ملف فريد حتى ما يصير تعارض بين منتجات مختلفة
+            var fileName = $"product_{id}_{Guid.NewGuid()}{extension}";
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // نخزن بس المسار النسبي بقاعدة البيانات
+            product.ImageUrl = $"/images/{fileName}";
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { imageUrl = product.ImageUrl });
         }
     }
 }

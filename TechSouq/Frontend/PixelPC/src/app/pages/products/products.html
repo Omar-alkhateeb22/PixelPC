@@ -1,0 +1,76 @@
+<section class="py-4">
+  <div class="container">
+    <div class="row g-4">
+      <aside class="col-md-3">
+        <h2 class="h6 mb-3">التصنيفات</h2>
+
+        @if (categoriesLoading()) {
+          <p class="text-muted small">جاري التحميل...</p>
+        } @else if (categoriesError()) {
+          <p class="text-danger small">{{ categoriesError() }}</p>
+        } @else {
+          <div class="list-group category-sidebar">
+            <a
+              [routerLink]="['/products']"
+              class="list-group-item list-group-item-action"
+              [class.active]="selectedCategoryId() === null"
+            >
+              كل المنتجات
+            </a>
+            @for (category of categories(); track category.id) {
+              <a
+                [routerLink]="['/products']"
+                [queryParams]="{ categoryId: category.id }"
+                class="list-group-item list-group-item-action"
+                [class.active]="selectedCategoryId() === category.id"
+              >
+                {{ category.name }}
+              </a>
+            }
+          </div>
+        }
+      </aside>
+
+      <div class="col-md-9">
+        <h2 class="h5 mb-4">المنتجات</h2>
+
+        @if (productsLoading()) {
+          <p class="text-muted">جاري التحميل...</p>
+        } @else if (productsError()) {
+          <p class="text-danger">{{ productsError() }}</p>
+        } @else if (products().length === 0) {
+          <p class="text-muted">لا توجد منتجات في هذا التصنيف.</p>
+        } @else {
+          <div class="product-grid">
+            @for (product of products(); track product.id) {
+              <div class="card product-card h-100">
+                <div class="product-card-image">
+                  @if (product.imageUrl && !brokenImageIds().has(product.id)) {
+                    <img [src]="product.imageUrl" [alt]="product.name" (error)="onImageError(product.id)" />
+                  } @else {
+                    <div class="img-placeholder"><i class="bi bi-image"></i></div>
+                  }
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <h3 class="h6 mb-1">{{ product.name }}</h3>
+                  <p class="text-muted small mb-2">{{ product.brand }}</p>
+
+                  @let startingPrice = getStartingPrice(product.variants);
+                  @if (startingPrice !== null) {
+                    <p class="text-price fs-5 mb-3">{{ startingPrice }}</p>
+                  } @else {
+                    <p class="text-muted small mb-3">لا تتوفر نسخ حاليًا</p>
+                  }
+
+                  <a [routerLink]="['/products', product.id]" class="btn btn-primary btn-sm mt-auto">
+                    عرض التفاصيل
+                  </a>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
