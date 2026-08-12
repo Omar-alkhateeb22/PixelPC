@@ -77,8 +77,22 @@
         </div>
 
         <div class="col-md-6">
-          <label class="form-label">رابط الصورة (URL)</label>
-          <input type="text" class="form-control" formControlName="imageUrl" />
+          <label class="form-label">صورة المنتج</label>
+          <input #fileInput type="file" accept="image/*" class="form-control" (change)="onFileSelected($event)" />
+          @if (imageError()) {
+            <div class="text-danger small mt-1">{{ imageError() }}</div>
+          }
+
+          <div class="product-image-preview mt-2">
+            @let existingUrl = editingProduct()?.imageUrl;
+            @if (imagePreviewUrl(); as preview) {
+              <img [src]="preview" alt="معاينة الصورة المختارة" />
+            } @else if (buildImageUrl(existingUrl); as src) {
+              <img [src]="src" alt="الصورة الحالية" />
+            } @else {
+              <div class="img-placeholder"><i class="bi bi-image"></i></div>
+            }
+          </div>
         </div>
 
         <div class="col-12 d-flex align-items-center gap-2">
@@ -126,8 +140,9 @@
             <tr>
               <td>
                 <div class="product-thumb">
-                  @if (product.imageUrl && !brokenImageIds().has(product.id)) {
-                    <img [src]="product.imageUrl" [alt]="product.name" (error)="onImageError(product.id)" />
+                  @let src = buildImageUrl(product.imageUrl);
+                  @if (src && !brokenImageIds().has(product.id)) {
+                    <img [src]="src" [alt]="product.name" (error)="onImageError(product.id)" />
                   } @else {
                     <div class="img-placeholder"><i class="bi bi-image"></i></div>
                   }

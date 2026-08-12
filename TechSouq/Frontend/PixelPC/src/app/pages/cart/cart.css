@@ -1,0 +1,7 @@
+.quantity-cell {
+  min-width: 140px;
+}
+
+.quantity-cell input {
+  width: 70px;
+}

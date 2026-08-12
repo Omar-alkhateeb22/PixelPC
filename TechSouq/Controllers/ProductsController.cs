@@ -242,7 +242,6 @@ namespace PixelPC.Controllers
                 return BadRequest("No file uploaded");
             }
 
-            // تحقق بسيط من نوع الملف
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
             var extension = Path.GetExtension(file.FileName).ToLower();
             if (!allowedExtensions.Contains(extension))
@@ -250,7 +249,6 @@ namespace PixelPC.Controllers
                 return BadRequest("Only image files are allowed (jpg, jpeg, png, webp)");
             }
 
-            // اسم ملف فريد حتى ما يصير تعارض بين منتجات مختلفة
             var fileName = $"product_{id}_{Guid.NewGuid()}{extension}";
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
 
@@ -266,7 +264,6 @@ namespace PixelPC.Controllers
                 await file.CopyToAsync(stream);
             }
 
-            // نخزن بس المسار النسبي بقاعدة البيانات
             product.ImageUrl = $"/images/{fileName}";
             await _dbContext.SaveChangesAsync();
 

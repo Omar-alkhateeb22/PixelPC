@@ -36,7 +36,7 @@ export class Login {
     this.auth.login(this.form.getRawValue()).subscribe({
       next: () => {
         this.isSubmitting.set(false);
-        this.router.navigateByUrl(this.auth.isAdmin() ? '/admin' : '/products');
+        this.router.navigateByUrl(this.auth.isAdmin() ? '/admin' : '/');
       },
       error: (err: HttpErrorResponse) => {
         this.isSubmitting.set(false);

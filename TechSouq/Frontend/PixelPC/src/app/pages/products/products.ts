@@ -9,6 +9,7 @@ import { CategoryService } from '../../core/services/category-service';
 import { Category } from '../../core/models/category.models';
 import { ProductDetail } from '../../core/models/product.models';
 import { getStartingPrice } from '../../core/utils/pricing';
+import { buildImageUrl } from '../../core/utils/image';
 
 @Component({
   selector: 'app-products',
@@ -22,6 +23,7 @@ export class Products implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   readonly getStartingPrice = getStartingPrice;
+  readonly buildImageUrl = buildImageUrl;
 
   readonly categories = signal<Category[]>([]);
   readonly categoriesLoading = signal(true);

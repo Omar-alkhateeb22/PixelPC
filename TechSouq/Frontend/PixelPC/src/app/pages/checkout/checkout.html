@@ -1,4 +1,106 @@
-<section class="container py-5 text-center">
-  <h2>إتمام الطلب</h2>
-  <p class="text-muted">هذه الصفحة قيد الإنشاء.</p>
+<section class="container py-5">
+  <h2 class="mb-4">إتمام الطلب</h2>
+
+  @if (checkoutResult(); as result) {
+    <div class="text-center py-5">
+      <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+      <h3 class="mt-3">تم تأكيد طلبك بنجاح</h3>
+
+      <dl class="row justify-content-center mt-4 mx-auto" style="max-width: 360px;">
+        <dt class="col-6 text-end">رقم الطلب</dt>
+        <dd class="col-6 text-start">{{ result.orderId }}</dd>
+
+        <dt class="col-6 text-end">رقم الفاتورة</dt>
+        <dd class="col-6 text-start">{{ result.invoiceNumber }}</dd>
+
+        <dt class="col-6 text-end">الإجمالي</dt>
+        <dd class="col-6 text-start text-price">{{ result.totalAmount }}</dd>
+      </dl>
+
+      <div class="d-flex justify-content-center gap-2 mt-4">
+        <a routerLink="/orders" class="btn btn-primary">عرض طلباتي</a>
+        <a routerLink="/products" class="btn btn-outline-secondary">متابعة التسوق</a>
+      </div>
+    </div>
+  } @else if (loadingCart()) {
+    <p class="text-muted">جاري التحميل...</p>
+  } @else if (cartErrorMessage()) {
+    <div class="alert alert-danger" role="alert">{{ cartErrorMessage() }}</div>
+  } @else if (cart(); as cart) {
+    @if (cart.items.length === 0) {
+      <div class="empty-state">
+        <p class="text-muted mb-3">سلتك فارغة، أضف منتجات أولاً.</p>
+        <a routerLink="/products" class="btn btn-primary">تسوق الآن</a>
+      </div>
+    } @else {
+      <div class="row g-4">
+        <div class="col-md-7">
+          <h5 class="mb-3">ملخص الطلب</h5>
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered bg-white">
+              <thead>
+                <tr>
+                  <th>المنتج</th>
+                  <th>SKU</th>
+                  <th>السعر</th>
+                  <th>الكمية</th>
+                  <th>الإجمالي</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of cart.items; track item.id) {
+                  <tr>
+                    <td>{{ item.productName }}</td>
+                    <td>{{ item.stockKeepingUnit }}</td>
+                    <td class="text-price">{{ item.price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td class="text-price">{{ item.price * item.quantity }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <h5 class="text-end">
+            الإجمالي الكلي:
+            <span class="text-price">{{ grandTotal() }}</span>
+          </h5>
+        </div>
+
+        <div class="col-md-5">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title mb-3">بيانات الشحن</h5>
+
+              @if (checkoutError()) {
+                <div class="alert alert-danger" role="alert">{{ checkoutError() }}</div>
+              }
+
+              <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+                <div class="mb-3">
+                  <label class="form-label">عنوان الشحن</label>
+                  <textarea
+                    class="form-control"
+                    rows="3"
+                    formControlName="shippingAddress"
+                    [class.is-invalid]="
+                      form.controls.shippingAddress.invalid && form.controls.shippingAddress.touched
+                    "
+                  ></textarea>
+                  @if (form.controls.shippingAddress.invalid && form.controls.shippingAddress.touched) {
+                    <div class="invalid-feedback">
+                      يرجى إدخال عنوان شحن صحيح (10 أحرف على الأقل).
+                    </div>
+                  }
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100" [disabled]="isSubmitting()">
+                  {{ isSubmitting() ? 'جارٍ تنفيذ الطلب...' : 'تأكيد الطلب' }}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
 </section>

@@ -6,6 +6,7 @@ import { CategoryService } from '../../core/services/category-service';
 import { ProductService } from '../../core/services/product-service';
 import { Category } from '../../core/models/category.models';
 import { Product } from '../../core/models/product.models';
+import { buildImageUrl } from '../../core/utils/image';
 
 const FEATURED_COUNT = 8;
 
@@ -27,6 +28,16 @@ export class Home implements OnInit {
   readonly featuredLoading = signal(true);
   readonly featuredError = signal<string | null>(null);
 
+  readonly buildImageUrl = buildImageUrl;
+
+  // Ids of products whose imageUrl failed to load, so a broken URL falls back
+  // to the placeholder instead of the browser's broken-image icon.
+  readonly brokenImageIds = signal<Set<number>>(new Set());
+
+  onImageError(productId: number): void {
+    this.brokenImageIds.update((ids) => new Set(ids).add(productId));
+  }
+
   ngOnInit(): void {
     this.loadCategories();
     this.loadFeaturedProducts();
@@ -46,6 +57,8 @@ export class Home implements OnInit {
   }
 
   private loadFeaturedProducts(): void {
+    this.brokenImageIds.set(new Set());
+
     this.productService.getAll().subscribe({
       next: (products) => {
         this.featuredProducts.set(products.slice(0, FEATURED_COUNT));

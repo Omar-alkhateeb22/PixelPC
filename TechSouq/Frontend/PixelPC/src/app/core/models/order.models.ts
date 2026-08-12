@@ -1,8 +1,10 @@
 export type OrderStatus = 'Pending' | 'Confirmed' | 'Shipped' | 'Cancelled';
 
 export interface OrderItem {
-  id: number;
-  productVariantId: number;
+  // GetOrderById's item projection never actually selects these two —
+  // don't rely on them being present.
+  id?: number;
+  productVariantId?: number;
   stockKeepingUnit: string;
   productName: string;
   quantity: number;
@@ -11,7 +13,8 @@ export interface OrderItem {
 
 export interface OrderSummary {
   id: number;
-  userId: number;
+  // Only GetAllOrders (admin) returns this; GetMyOrders (customer) omits it.
+  userId?: number;
   orderDate: string;
   status: OrderStatus;
   totalAmount: number;
@@ -20,4 +23,15 @@ export interface OrderSummary {
 
 export interface Order extends OrderSummary {
   items: OrderItem[];
+}
+
+export interface CheckoutRequest {
+  shippingAddress: string;
+}
+
+export interface CheckoutResponse {
+  message: string;
+  orderId: number;
+  invoiceNumber: string;
+  totalAmount: number;
 }

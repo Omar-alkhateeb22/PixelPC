@@ -7,8 +7,9 @@
     <div class="row g-4">
       <div class="col-md-7">
         <div class="product-detail-image">
-          @if (product.imageUrl && !imageLoadError()) {
-            <img [src]="product.imageUrl" [alt]="product.name" (error)="imageLoadError.set(true)" />
+          @let src = buildImageUrl(product.imageUrl);
+          @if (src && !imageLoadError()) {
+            <img [src]="src" [alt]="product.name" (error)="imageLoadError.set(true)" />
           } @else {
             <div class="img-placeholder"><i class="bi bi-image"></i></div>
           }

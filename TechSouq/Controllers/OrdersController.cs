@@ -202,6 +202,8 @@ namespace PixelPC.Controllers
                                where oi.OrderId == id
                                select new
                                {
+                                   oi.Id,                    // ⬅️ ضيف هذا
+                                   oi.ProductVariantId,
                                    ProductName = p.Name,
                                    v.StockKeepingUnit,
                                    oi.Quantity,

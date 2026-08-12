@@ -45,8 +45,9 @@
             @for (product of products(); track product.id) {
               <div class="card product-card h-100">
                 <div class="product-card-image">
-                  @if (product.imageUrl && !brokenImageIds().has(product.id)) {
-                    <img [src]="product.imageUrl" [alt]="product.name" (error)="onImageError(product.id)" />
+                  @let src = buildImageUrl(product.imageUrl);
+                  @if (src && !brokenImageIds().has(product.id)) {
+                    <img [src]="src" [alt]="product.name" (error)="onImageError(product.id)" />
                   } @else {
                     <div class="img-placeholder"><i class="bi bi-image"></i></div>
                   }

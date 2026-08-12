@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { ProductService } from '../../core/services/product-service';
 import { CartService } from '../../core/services/cart-service';
 import { ProductDetail, ProductVariant } from '../../core/models/product.models';
+import { buildImageUrl } from '../../core/utils/image';
 
 interface VariantAttributes {
   ram: string;
@@ -24,6 +25,8 @@ export class ProductDetails {
   private readonly route = inject(ActivatedRoute);
   private readonly productService = inject(ProductService);
   private readonly cartService = inject(CartService);
+
+  readonly buildImageUrl = buildImageUrl;
 
   readonly product = signal<ProductDetail | null>(null);
   readonly loading = signal(true);
@@ -104,6 +107,7 @@ export class ProductDetails {
       next: () => {
         this.addingToCart.set(false);
         this.addToCartSuccess.set(true);
+        this.cartService.refreshCount();
       },
       error: (err: HttpErrorResponse) => {
         this.addingToCart.set(false);

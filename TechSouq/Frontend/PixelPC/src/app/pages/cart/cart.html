@@ -1,4 +1,80 @@
-<section class="container py-5 text-center">
-  <h2>سلة التسوق</h2>
-  <p class="text-muted">هذه الصفحة قيد الإنشاء.</p>
+<section class="container py-5">
+  <h2 class="mb-4">سلة التسوق</h2>
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="text-muted">جاري التحميل...</p>
+  } @else if (cart(); as cart) {
+    @if (cart.items.length === 0) {
+      <div class="empty-state">
+        <p class="text-muted mb-3">سلتك فارغة حالياً.</p>
+        <a routerLink="/products" class="btn btn-primary">تسوق الآن</a>
+      </div>
+    } @else {
+      <div class="table-responsive mb-4">
+        <table class="table table-bordered align-middle bg-white">
+          <thead>
+            <tr>
+              <th>المنتج</th>
+              <th>SKU</th>
+              <th>السعر</th>
+              <th>الكمية</th>
+              <th>الإجمالي</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of cart.items; track item.id) {
+              <tr>
+                <td>{{ item.productName }}</td>
+                <td>{{ item.stockKeepingUnit }}</td>
+                <td class="text-price">{{ item.price }}</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2 quantity-cell">
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      min="1"
+                      [value]="quantityDrafts()[item.id] ?? item.quantity"
+                      (input)="onQuantityInput(item.id, $event)"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary text-nowrap"
+                      [disabled]="updatingItemIds().has(item.id)"
+                      (click)="updateQuantity(item)"
+                    >
+                      تحديث
+                    </button>
+                  </div>
+                </td>
+                <td class="text-price">{{ item.price * item.quantity }}</td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    [disabled]="removingItemIds().has(item.id)"
+                    (click)="removeItem(item)"
+                  >
+                    حذف
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <h4 class="mb-0">
+          الإجمالي الكلي:
+          <span class="text-price">{{ grandTotal() }}</span>
+        </h4>
+        <a routerLink="/checkout" class="btn btn-primary btn-lg">إتمام الشراء</a>
+      </div>
+    }
+  }
 </section>
