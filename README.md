@@ -51,20 +51,7 @@ A full-featured e-commerce platform for computer parts and accessories — a gra
 - 📊 Stock movement history log with manual adjustment support
 - 🧾 Order management with status updates
 
----
 
-## Database Structure
-
-11 core entities:
-
-`User` · `Category` · `Product` · `ProductVariant` · `Cart` · `CartItem` · `Order` · `OrderItem` · `Invoice` · `StockMovement` · `Notification`
-
-### Notable design decisions
-- All IDs are of type `long`
-- Categories are flat (no hierarchical parent/child structure)
-- `ProductVariant` is a standalone entity carrying price and stock (not `Product` directly)
-- Purchase price is captured as a snapshot inside `OrderItem`, unaffected by later price changes
-- Every stock change (sale or manual adjustment) is logged in `StockMovement` for auditing
 
 ---
 
@@ -108,43 +95,14 @@ PixelPC/
 
 ### Prerequisites
 - .NET 8 SDK
-- Node.js + Angular CLI
 - PostgreSQL
 
 ### Backend
-```bash
-cd backend
-dotnet restore
-dotnet ef database update
-dotnet run
-```
 Runs on: `https://localhost:44379`
 
 ### Frontend
-```bash
-cd frontend/PixelPC
-npm install
-ng serve
-```
 Runs on: `http://localhost:4200`
 
-> ⚠️ Make sure CORS is enabled in `Program.cs` to allow requests from `http://localhost:4200`, and configure the database connection string in `appsettings.json`.
-
----
-
-## API Endpoints (Summary)
-
-| Route | Description |
-|---|---|
-| `POST /api/Auth/register` `/login` | Account registration and login (JWT) |
-| `GET/POST/PUT/DELETE /api/Categories/*` | Category management |
-| `GET/POST/PUT/DELETE /api/Products/*` | Product and variant management |
-| `GET/POST/PUT/DELETE /api/Cart/*` | Shopping cart management |
-| `POST /api/Orders/checkout` | Checkout |
-| `GET /api/Orders/*` `PATCH .../UpdateOrderStatus` | Order management |
-| `GET /api/Invoices/{orderId}` | View invoice |
-| `GET/PATCH /api/Notifications/*` | Notifications |
-| `GET/POST /api/StockMovements/*` | Stock movements |
 
 ---
 
@@ -152,30 +110,26 @@ Runs on: `http://localhost:4200`
 
 | Page | Screenshot |
 |---|---|
-| Login | ![Login](Frontend/PixelPC/Screenshots/Login.png) |
-| Register | ![Register](Frontend/PixelPC/Screenshots/Register.png) |
-| Home page | ![DashBoared](Frontend/PixelPC/Screenshots/DashBoared.png) |
-| All Products | ![AllProducts](Frontend/PixelPC/Screenshots/AllProducts.png) |
-| Product Details | ![Products](Frontend/PixelPC/Screenshots/Products.png) |
-| Product Details (extra view) | ![Products2](Frontend/PixelPC/Screenshots/Products2.png) |
-| Shopping Cart | ![Basket](Frontend/PixelPC/Screenshots/The%20basket.png) |
-| Shopping Cart (extra view) | ![Basket2](Frontend/PixelPC/Screenshots/The%20basket2.png) |
-| Admin Dashboard | ![AdminDashBoard](Frontend/PixelPC/Screenshots/AdminDashBoared.png) |
-| Category Management | ![CategoryManagement](Frontend/PixelPC/Screenshots/Category%20Management.png) |
-| Product Management | ![ProductsManagement](Frontend/PixelPC/Screenshots/ProductsManagement.png) |
-| Product Management (extra view) | ![ProductsManagement2](Frontend/PixelPC/Screenshots/ProductsManagement2.png) |
-| Stock Management | ![StorageManagement](Frontend/PixelPC/Screenshots/StorageManagement.png) |
-| Order Management (Admin) | ![OrdersAdmin](Frontend/PixelPC/Screenshots/Orders-AdminAprove.png) |
-| My Orders (Customer) | ![MyOrders](Frontend/PixelPC/Screenshots/MyOrders.png) |
+| Login | ![Login](TechSouq/Frontend/PixelPC/Screenshots/Login.png) |
+| Register | ![Register](TechSouq/Frontend/PixelPC/Screenshots/Register.png) |
+| Home page | ![DashBoared](TechSouq/Frontend/PixelPC/Screenshots/DashBoared.png) |
+| All Products | ![AllProducts](TechSouq/Frontend/PixelPC/Screenshots/AllProducts.png) |
+| Product Details | ![Products](TechSouq/Frontend/PixelPC/Screenshots/Products.png) |
+| Product Details (extra view) | ![Products2](TechSouq/Frontend/PixelPC/Screenshots/Products2.png) |
+| Shopping Cart | ![Basket](TechSouq/Frontend/PixelPC/Screenshots/The%20basket.png) |
+| Shopping Cart (extra view) | ![Basket2](TechSouq/Frontend/PixelPC/Screenshots/The%20basket2.png) |
+| Admin Dashboard | ![AdminDashBoard](TechSouq/Frontend/PixelPC/Screenshots/AdminDashBoared.png) |
+| Category Management | ![CategoryManagement](TechSouq/Frontend/PixelPC/Screenshots/Category%20Management.png) |
+| Product Management | ![ProductsManagement](TechSouq/Frontend/PixelPC/Screenshots/ProductsManagement.png) |
+| Product Management (extra view) | ![ProductsManagement2](TechSouq/Frontend/PixelPC/Screenshots/ProductsManagement2.png) |
+| Stock Management | ![StorageManagement](TechSouq/Frontend/PixelPC/Screenshots/StorageManagement.png) |
+| Order Management (Admin) | ![OrdersAdmin](TechSouq/Frontend/PixelPC/Screenshots/Orders-AdminAprove.png) |
+| My Orders (Customer) | ![MyOrders](TechSouq/Frontend/PixelPC/Screenshots/MyOrders.png) |
 
 ---
 
 ## Author
-
-Graduation project — built with ASP.NET Core and Angular.
+Omar Alkhateeb
+omaralkhateeb1w@gmail.com
 
 ---
-
-## License
-
-This project is for academic purposes.
